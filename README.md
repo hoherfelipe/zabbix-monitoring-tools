@@ -1,2 +1,7 @@
-# zabbix-monitoring-tools
-Scripts, templates e dashboards usados no monitoramento com Zabbix e Grafana.
+# 🛠️ Zabbix Monitoring Tools
+
+Repositório com templates, scripts e dashboards criados para ambientes monitorados com **Zabbix** e visualizados com **Grafana**.
+
+## 📁 Conteúdo
+
+- `templates/` – Templates personalizados do Zabbix
