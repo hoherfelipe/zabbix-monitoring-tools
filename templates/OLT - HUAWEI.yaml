@@ -1,0 +1,1133 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  templates:
+    - uuid: 6bfe1bf25c57456da97506e49eddeb55
+      template: 'OLT HUAWEI'
+      name: 'OLT HUAWEI'
+      description: |
+        Desenvolvido por:
+        JM Network Solutions
+        https://jmnetwork.solutions
+        051 2160-9897 | 048 3036-0478
+        
+        Proibido o uso sem autorização.
+      groups:
+        - name: Templates
+      items:
+        - uuid: f959391e32ee46cbb7ccd52c115b281a
+          name: 'GET GPON'
+          type: SNMP_AGENT
+          snmp_oid: 'walk[1.3.6.1.2.1.31.1.1.1.1,1.3.6.1.4.1.2011.6.128.1.1.2.21.1.16,1.3.6.1.4.1.2011.6.128.1.1.2.23.1.4,1.3.6.1.4.1.2011.6.128.1.1.2.23.1.5,1.3.6.1.2.1.2.2.1.8,1.3.6.1.2.1.31.1.1.1.6,1.3.6.1.2.1.31.1.1.1.10]'
+          key: get.gpon.walk
+          history: 90d
+          value_type: TEXT
+          trends: '0'
+        - uuid: 8df58f6d00194578b3fb8cb747fa80a0
+          name: 'Número de interfaces de rede'
+          type: SNMP_AGENT
+          snmp_oid: 'IF-MIB::ifNumber.0'
+          key: ifNumber
+          delay: '60'
+          history: 7d
+          description: 'The number of network interfaces (regardless of their current state) present on this system.'
+          tags:
+            - tag: Application
+              value: Interfaces
+        - uuid: db9c6369a1ac4d02a08a4c8b15436caa
+          name: ONU-TOTAL
+          type: CALCULATED
+          key: onu.total
+          history: 90d
+          units: '!Onus'
+          params: 'sum(last_foreach(//OltAuthONU[*]))'
+          tags:
+            - tag: ONU
+              value: ONU-TOTAL
+        - uuid: b596ddc5b6044418b4280ae746428820
+          name: ONU-TOTAL-AUTORIZADAS
+          type: CALCULATED
+          key: onu.total.autorizadas
+          history: 90d
+          units: '!Onus'
+          params: 'sum(last_foreach(//OltAuthONU[*]))'
+          tags:
+            - tag: ONU
+              value: ONU-TOTAL-AUTORIZADAS
+        - uuid: b44944cfb5274c80b704fc735d2a084f
+          name: TOTAL-DOWNLOAD-PON
+          type: CALCULATED
+          key: onu.total.down
+          history: 90d
+          units: bps
+          params: 'sum(last_foreach(//ifInOctets[*]))'
+          tags:
+            - tag: ONU
+              value: ONU-TOTAL
+        - uuid: f7d518c24c404913b95e63b6d5877d10
+          name: ONU-TOTAL-DESCONHECIDAS
+          type: CALCULATED
+          key: onu.total.invalid
+          history: 90d
+          units: '!Onus'
+          params: |
+            sum(last_foreach(//OltAuthONU[*]))-
+            last(//onu.total.online)-
+            last(//onu.total.offline)-
+            last(//onu.total.sem.energia)-
+            last(//onu.total.sem.sinal)
+          tags:
+            - tag: ONU
+              value: ONU-TOTAL
+        - uuid: b85097d0eeac4efb9fec7fe57f8f98e9
+          name: ONU-TOTAL-OFFLINE
+          type: CALCULATED
+          key: onu.total.offline
+          history: 90d
+          units: '!Onus'
+          params: 'sum(last_foreach(//OltOffONU[*]))'
+          tags:
+            - tag: ONU
+              value: ONU-TOTAL
+        - uuid: 4b7cff6276ce43d4b7d7df7ac37bf2d5
+          name: ONU-TOTAL-ONLINE
+          type: CALCULATED
+          key: onu.total.online
+          history: 90d
+          units: '!Onus'
+          params: 'sum(last_foreach(//OltOnONU[*]))'
+          tags:
+            - tag: ONU
+              value: ONU-TOTAL
+        - uuid: cb7b6413fda04ea4906cffd8a20a1d45
+          name: ONU-TOTAL-SEM-ENERGIA
+          type: CALCULATED
+          key: onu.total.sem.energia
+          history: 90d
+          units: '!Onus'
+          params: 'sum(last_foreach(//OltDyingGaspONU[*]))'
+          tags:
+            - tag: ONU
+              value: ONU-TOTAL
+        - uuid: fbf3e785198246ddb124a112c451d0a8
+          name: ONU-TOTAL-SEM-SINAL
+          type: CALCULATED
+          key: onu.total.sem.sinal
+          history: 90d
+          units: '!Onus'
+          params: 'sum(last_foreach(//OltLostSignalONU[*]))'
+          tags:
+            - tag: ONU
+              value: ONU-TOTAL
+        - uuid: a053209e81854780b2465786c8ce6ed3
+          name: TOTAL-UPLOAD-PON
+          type: CALCULATED
+          key: onu.total.up
+          history: 90d
+          units: bps
+          params: 'sum(last_foreach(//ifOutOctets[*]))'
+          tags:
+            - tag: ONU
+              value: ONU-TOTAL
+        - uuid: c2b3a26852164e719ba2d9a210e8e0fd
+          name: 'Nome OLT'
+          type: SNMP_AGENT
+          snmp_oid: 'SNMPv2-MIB::sysName.0'
+          key: sysName.0
+          delay: 1d
+          history: 90d
+          value_type: TEXT
+          trends: '0'
+        - uuid: d71a867b525440f7b29ba18f34d0d041
+          name: 'Uptime OLT'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.2.1.1.3.0
+          key: sysUpTime
+          delay: 5m
+          history: 90d
+          value_type: FLOAT
+          units: uptime
+          preprocessing:
+            - type: MULTIPLIER
+              parameters:
+                - '0.01'
+      discovery_rules:
+        - uuid: fb33a81d0a954fc799be328fc7c5beef
+          name: 'OLT BOARDS'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#OLTBOARD},1.3.6.1.4.1.2011.6.3.3.2.1.1]'
+          key: hwSlotIndex
+          delay: 6h
+          lifetime: 1d
+          enabled_lifetime_type: DISABLE_NEVER
+          item_prototypes:
+            - uuid: ff81439ead7c49e39c9d512267deda6b
+              name: 'Board {#SNMPINDEX} Temperature'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.6.3.3.2.1.13.{#SNMPINDEX}'
+              key: 'OltBoardCpuTemp[{#SNMPINDEX}]'
+              delay: 10m
+              history: 2w
+              trends: '0'
+              units: Cº
+              valuemap:
+                name: TEMPERATURA
+              tags:
+                - tag: Application
+                  value: Temperature
+            - uuid: 43ed410369594e18ac313123fcd6f945
+              name: 'Carga CPU board {#SNMPINDEX}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.2.6.7.1.1.2.1.5.{#SNMPINDEX}'
+              key: 'OltCpuUtilBoard[{#SNMPINDEX}]'
+              delay: 5m
+              value_type: FLOAT
+              trends: 180d
+              units: '%'
+              valuemap:
+                name: CPU
+              tags:
+                - tag: Application
+                  value: CPU
+        - uuid: 49ad80e8bec54a91b7ffc24973491fb1
+          name: INTERFACES
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#SNMPVALUE},IF-MIB::ifName]'
+          key: ifName
+          delay: 1h
+          filter:
+            conditions:
+              - macro: '{#SNMPVALUE}'
+                value: GPON
+                operator: NOT_MATCHES_REGEX
+                formulaid: A
+          lifetime: 2d
+          enabled_lifetime_type: DISABLE_NEVER
+          item_prototypes:
+            - uuid: 8823074fd69e4eaf9b0d8e9a6db7a861
+              name: 'Status de administrador da interface {#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: 'IF-MIB::ifAdminStatus.{#SNMPINDEX}'
+              key: 'ifAdminStatus[{#SNMPVALUE}]'
+              delay: 20m
+              history: 7d
+              description: 'The desired state of the interface.'
+              valuemap:
+                name: 'SNMP interface status (ifAdminStatus)'
+              tags:
+                - tag: Application
+                  value: Interfaces
+            - uuid: 14ddeccda69940a6949ac1d7876bcd94
+              name: 'Tráfego de entrada na interface {#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: 'IF-MIB::ifInOctets.{#SNMPINDEX}'
+              key: 'ifInOctets[{#SNMPVALUE}]'
+              delay: 2m
+              history: 7d
+              units: bps
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                - type: MULTIPLIER
+                  parameters:
+                    - '8'
+              tags:
+                - tag: Application
+                  value: Interfaces
+            - uuid: b4d5603f6121455bb4f5a838772817a5
+              name: 'Nome da interface {#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: 'IF-MIB::ifName.{#SNMPINDEX}'
+              key: 'ifName[{#SNMPVALUE}]'
+              delay: 6h
+              history: 7d
+              value_type: CHAR
+              trends: '0'
+              tags:
+                - tag: Application
+                  value: Interfaces
+            - uuid: d975752f1f8949dfb88ae6a92824115b
+              name: 'Status operacional da interface {#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: 'IF-MIB::ifOperStatus.{#SNMPINDEX}'
+              key: 'ifOperStatus[{#SNMPVALUE}]'
+              history: 7d
+              valuemap:
+                name: 'SNMP interface status (ifOperStatus)'
+              tags:
+                - tag: Application
+                  value: Interfaces
+              trigger_prototypes:
+                - uuid: 63d16d9fa4e243f2b0a8405c216a63ff
+                  expression: |
+                    (last(/OLT HUAWEI/ifOperStatus[{#SNMPVALUE}])<>
+                    last(/OLT HUAWEI/ifOperStatus[{#SNMPVALUE}],#2))=1 and
+                    last(/OLT HUAWEI/ifOperStatus[{#SNMPVALUE}])=2
+                  recovery_mode: RECOVERY_EXPRESSION
+                  recovery_expression: 'last(/OLT HUAWEI/ifOperStatus[{#SNMPVALUE}])=1'
+                  name: 'Interface {#SNMPVALUE} está down'
+                  priority: AVERAGE
+                  manual_close: 'YES'
+            - uuid: f72ac13476b14fddaf3ca32079f0de6e
+              name: 'Tráfego de saída na interface {#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: 'IF-MIB::ifOutOctets.{#SNMPINDEX}'
+              key: 'ifOutOctets[{#SNMPVALUE}]'
+              delay: 2m
+              history: 7d
+              units: bps
+              preprocessing:
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                - type: MULTIPLIER
+                  parameters:
+                    - '8'
+              tags:
+                - tag: Application
+                  value: Interfaces
+          graph_prototypes:
+            - uuid: a481e77d572b475594c663ecf00021bf
+              name: 'Traffic on interface {#SNMPVALUE}'
+              graph_items:
+                - drawtype: GRADIENT_LINE
+                  color: 00AA00
+                  item:
+                    host: 'OLT HUAWEI'
+                    key: 'ifInOctets[{#SNMPVALUE}]'
+                - sortorder: '1'
+                  drawtype: GRADIENT_LINE
+                  color: 3333FF
+                  item:
+                    host: 'OLT HUAWEI'
+                    key: 'ifOutOctets[{#SNMPVALUE}]'
+        - uuid: 5f5d454109d941a1aba1176778b045b5
+          name: 'PLACAS DE SERVIÇO'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#BOARDMODEL},1.3.6.1.4.1.2011.6.3.3.2.1.21.0]'
+          key: oltBoards
+          delay: 1h
+          filter:
+            conditions:
+              - macro: '{#BOARDMODEL}'
+                value: '@só-serviço'
+                formulaid: A
+          lifetime: 5d
+          enabled_lifetime_type: DISABLE_NEVER
+          item_prototypes:
+            - uuid: 23060af0e446471ea9ff823c7e5a3ab7
+              name: 'STATUS PLACA SERVICO {#SNMPINDEX} {#BOARDMODEL}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.6.3.3.2.1.8.0.{#SNMPINDEX}'
+              key: 'Board.Servico.Status[{#SNMPINDEX}]'
+              delay: 5m
+              valuemap:
+                name: 'STATUS PLACA'
+              tags:
+                - tag: Placa
+                  value: Serviço
+                - tag: Placa
+                  value: Status
+            - uuid: b7ee9150e16a44a7a34485c4a6c7070c
+              name: 'Uso de Memória Placa {#SNMPINDEX} {#BOARDMODEL}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.2.6.7.1.1.2.1.6.0.{#SNMPINDEX}'
+              key: 'memory.board[{#SNMPINDEX}]'
+              delay: 5m
+              history: 2w
+              value_type: FLOAT
+              units: '%'
+              tags:
+                - tag: Placa
+                  value: Memória
+                - tag: Placa
+                  value: Serviço
+            - uuid: 47afd8bc859a4bf5a6e11696fcbdc2cb
+              name: 'Temperatura Placa {#SNMPINDEX} {#BOARDMODEL}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.2.6.7.1.1.2.1.10.0.{#SNMPINDEX}'
+              key: 'temp.board[{#SNMPINDEX}]'
+              delay: 5m
+              history: 2w
+              units: °C
+              tags:
+                - tag: Placa
+                  value: Serviço
+                - tag: Placa
+                  value: Temperatura
+              trigger_prototypes:
+                - uuid: f08141146cb64e139b4a4cf136aaac1c
+                  expression: 'avg(/OLT HUAWEI/temp.board[{#SNMPINDEX}],10m)>55'
+                  recovery_mode: RECOVERY_EXPRESSION
+                  recovery_expression: 'avg(/OLT HUAWEI/temp.board[{#SNMPINDEX}],10m)<50'
+                  name: 'Temperatura Alta em {#SNMPINDEX} {#BOARDMODEL}'
+                  priority: AVERAGE
+                  dependencies:
+                    - name: 'Temperatura Alta em {#SNMPINDEX} {#BOARDMODEL}'
+                      expression: 'avg(/OLT HUAWEI/temp.board[{#SNMPINDEX}],10m)>60'
+                      recovery_expression: 'avg(/OLT HUAWEI/temp.board[{#SNMPINDEX}],10m)<56'
+                    - name: 'Temperatura Alta em {#SNMPINDEX} {#BOARDMODEL}'
+                      expression: 'avg(/OLT HUAWEI/temp.board[{#SNMPINDEX}],10m)>65'
+                      recovery_expression: 'avg(/OLT HUAWEI/temp.board[{#SNMPINDEX}],10m)<61'
+                - uuid: a0cc2a31b22f475899e7c47979251c34
+                  expression: 'avg(/OLT HUAWEI/temp.board[{#SNMPINDEX}],10m)>60'
+                  recovery_mode: RECOVERY_EXPRESSION
+                  recovery_expression: 'avg(/OLT HUAWEI/temp.board[{#SNMPINDEX}],10m)<56'
+                  name: 'Temperatura Alta em {#SNMPINDEX} {#BOARDMODEL}'
+                  priority: HIGH
+                  dependencies:
+                    - name: 'Temperatura Alta em {#SNMPINDEX} {#BOARDMODEL}'
+                      expression: 'avg(/OLT HUAWEI/temp.board[{#SNMPINDEX}],10m)>65'
+                      recovery_expression: 'avg(/OLT HUAWEI/temp.board[{#SNMPINDEX}],10m)<61'
+                - uuid: 644564bcb02041a69c7c3fbc67965fbf
+                  expression: 'avg(/OLT HUAWEI/temp.board[{#SNMPINDEX}],10m)>65'
+                  recovery_mode: RECOVERY_EXPRESSION
+                  recovery_expression: 'avg(/OLT HUAWEI/temp.board[{#SNMPINDEX}],10m)<61'
+                  name: 'Temperatura Alta em {#SNMPINDEX} {#BOARDMODEL}'
+                  priority: DISASTER
+            - uuid: 49dbb09bdff34e538dfc78b9669b8f94
+              name: 'Uso de CPU Placa {#SNMPINDEX} {#BOARDMODEL}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.2.6.7.1.1.2.1.5.0.{#SNMPINDEX}'
+              key: 'tempcpu.board[{#SNMPINDEX}]'
+              delay: 5m
+              history: 2w
+              value_type: FLOAT
+              units: '%'
+              tags:
+                - tag: Placa
+                  value: CPU
+                - tag: Placa
+                  value: Serviço
+        - uuid: 0963cbe0e6694102bd7f3dd344298f29
+          name: 'PLACAS DE GERÊNCIA'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#BOARDMODEL},1.3.6.1.4.1.2011.6.3.3.2.1.21.0]'
+          key: oltBoardsGer
+          delay: 1h
+          filter:
+            conditions:
+              - macro: '{#BOARDMODEL}'
+                value: '@só-gerência'
+                formulaid: A
+          lifetime: 5d
+          enabled_lifetime_type: DISABLE_NEVER
+          item_prototypes:
+            - uuid: 302eb0a6179b4e62bcb7a22c07c45274
+              name: 'STATUS PLACA GERENCIA {#SNMPINDEX} {#BOARDMODEL}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.6.3.3.2.1.8.0.{#SNMPINDEX}'
+              key: 'Board.Gerencia.Status[{#SNMPINDEX}]'
+              delay: 5m
+              valuemap:
+                name: 'STATUS PLACA'
+              tags:
+                - tag: Placa
+                  value: Gerência
+                - tag: Placa
+                  value: Status
+              trigger_prototypes:
+                - uuid: 3be5380a239a4854b07683471b475c4d
+                  expression: 'last(/OLT HUAWEI/Board.Gerencia.Status[{#SNMPINDEX}])<>2'
+                  name: 'PLACA DE GERÊNCIA {#SNMPINDEX} {#BOARDMODEL} {ITEM.LASTVALUE1}'
+                  opdata: 'Status da placa: {ITEM.LASTVALUE1}'
+                  priority: DISASTER
+            - uuid: 739e43eac3e54a1b953be2cb70faa733
+              name: 'Uso de Memória Placa {#SNMPINDEX} {#BOARDMODEL}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.2.6.7.1.1.2.1.6.0.{#SNMPINDEX}'
+              key: 'memory.board.gerencia[{#SNMPINDEX}]'
+              delay: 10m
+              units: '%'
+            - uuid: 67f39e05303c4d08a250fc27d7a95b68
+              name: 'Temperatura Placa {#SNMPINDEX} {#BOARDMODEL}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.2.6.7.1.1.2.1.10.0.{#SNMPINDEX}'
+              key: 'temp.board.gerencia[{#SNMPINDEX}]'
+              delay: 5m
+              units: Cº
+            - uuid: 3549b75f8f3b4aa291930b8b6b29a3e4
+              name: 'Uso de CPU Placa {#SNMPINDEX} {#BOARDMODEL}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.2.6.7.1.1.2.1.5.0.{#SNMPINDEX}'
+              key: 'temp.cpu.board[{#SNMPINDEX}]'
+              delay: 10m
+              units: '%'
+        - uuid: d8cd4a364119474db1e42009198ada19
+          name: 'PLACAS DE ENERGIA'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#BOARDMODEL},1.3.6.1.4.1.2011.6.3.3.2.1.21.0]'
+          key: oltBoardsPower
+          delay: 1h
+          filter:
+            conditions:
+              - macro: '{#BOARDMODEL}'
+                value: '@só-energia'
+                formulaid: A
+          lifetime: 5d
+          enabled_lifetime_type: DISABLE_NEVER
+          item_prototypes:
+            - uuid: a82b2a1100d945b78a7e9d6a158311be
+              name: 'STATUS PLACA ENERGIA {#SNMPINDEX} {#BOARDMODEL}'
+              type: TRAP
+              key: 'Board.Energia.Status[{#SNMPINDEX}]'
+              delay: '0'
+              valuemap:
+                name: 'STATUS PLACA'
+              tags:
+                - tag: Placa
+                  value: Energia
+                - tag: Placa
+                  value: Status
+              trigger_prototypes:
+                - uuid: cbeb67972b4e4d148861aee32f13eb94
+                  expression: 'last(/OLT HUAWEI/Board.Energia.Status[{#SNMPINDEX}])<>2'
+                  name: 'PLACA DE ENERGIA {#SNMPINDEX} {#BOARDMODEL} {ITEM.LASTVALUE1}'
+                  opdata: 'Status da placa: {ITEM.LASTVALUE1}'
+                  priority: DISASTER
+                  manual_close: 'YES'
+            - uuid: 119363715fb2481ea9670d81615ca452
+              name: 'MODO OPERACAO PLACA ENERGIA {#SNMPINDEX} {#BOARDMODEL}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.6.3.3.2.1.6.0.{#SNMPINDEX}'
+              key: 'Board.Mod[{#SNMPINDEX}]'
+              delay: 5m
+              tags:
+                - tag: Placa
+                  value: Energia
+                - tag: Placa
+                  value: Modo
+        - uuid: 832a5585d7d14dc4aace570d8e1041aa
+          name: GPON
+          type: DEPENDENT
+          key: oltGpons
+          delay: '0'
+          filter:
+            conditions:
+              - macro: '{#OLTPORT}'
+                value: GPON
+                formulaid: A
+          lifetime_type: DELETE_IMMEDIATELY
+          lifetime: '0'
+          item_prototypes:
+            - uuid: ab1046fa0acd4c5395b81c9188e29935
+              name: 'Sinal RX Interface {#OLTPORT}'
+              type: DEPENDENT
+              key: 'HW.GponOltOpticsDdmInfoRxPower.[{#OLTPORT}]'
+              delay: '0'
+              units: dBm
+              preprocessing:
+                - type: SNMP_WALK_VALUE
+                  parameters:
+                    - '1.3.6.1.4.1.2011.6.128.1.1.2.23.1.4.{#SNMPINDEX}'
+                    - '0'
+                - type: MULTIPLIER
+                  parameters:
+                    - '0.01'
+              master_item:
+                key: get.gpon.walk
+              tags:
+                - tag: GPON
+                  value: '{#OLTPORT}'
+            - uuid: 98f4d94cdf4848fead4646efba2119c2
+              name: 'Sinal TX Interface {#OLTPORT}'
+              type: DEPENDENT
+              key: 'HW.GponOltOpticsDdmInfoTxPower.[{#OLTPORT}]'
+              delay: '0'
+              trends: 180d
+              units: dBm
+              preprocessing:
+                - type: SNMP_WALK_VALUE
+                  parameters:
+                    - '1.3.6.1.4.1.2011.6.128.1.1.2.23.1.5.{#SNMPINDEX}'
+                    - '0'
+                - type: MULTIPLIER
+                  parameters:
+                    - '0.01'
+              master_item:
+                key: get.gpon.walk
+              tags:
+                - tag: GPON
+                  value: '{#OLTPORT}'
+            - uuid: d577dae1cf704d829d7eca7969d74a8a
+              name: 'Traf-IN-{#OLTPORT}'
+              type: DEPENDENT
+              key: 'ifHCInOctets.[{#OLTPORT}]'
+              delay: '0'
+              trends: 180d
+              units: bps
+              preprocessing:
+                - type: SNMP_WALK_VALUE
+                  parameters:
+                    - '1.3.6.1.2.1.31.1.1.1.6.{#SNMPINDEX}'
+                    - '0'
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                - type: MULTIPLIER
+                  parameters:
+                    - '8'
+              master_item:
+                key: get.gpon.walk
+              tags:
+                - tag: GPON
+                  value: '{#OLTPORT}'
+            - uuid: 39585713d4824554b65505680eb01c96
+              name: 'Traf-OUT-{#OLTPORT}'
+              type: DEPENDENT
+              key: 'ifHCOutOctets.[{#OLTPORT}]'
+              delay: '0'
+              trends: 180d
+              units: bps
+              preprocessing:
+                - type: SNMP_WALK_VALUE
+                  parameters:
+                    - '1.3.6.1.2.1.31.1.1.1.10.{#SNMPINDEX}'
+                    - '0'
+                - type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                - type: MULTIPLIER
+                  parameters:
+                    - '8'
+              master_item:
+                key: get.gpon.walk
+              tags:
+                - tag: GPON
+                  value: '{#OLTPORT}'
+            - uuid: 9ada5aff51574f73b77b824a8152b9e4
+              name: 'ONUs AUTORIZADAS EM {#OLTPORT}'
+              type: DEPENDENT
+              key: 'OltAuthONU[{#OLTPORT}]'
+              delay: '0'
+              trends: 180d
+              units: '!Onus'
+              preprocessing:
+                - type: SNMP_WALK_VALUE
+                  parameters:
+                    - '1.3.6.1.4.1.2011.6.128.1.1.2.21.1.16.{#SNMPINDEX}'
+                    - '0'
+              master_item:
+                key: get.gpon.walk
+              tags:
+                - tag: GPON
+                  value: '{#OLTPORT}'
+                - tag: ONU
+                  value: AUTORIZADAS
+              trigger_prototypes:
+                - uuid: 2388717a16144f23aa0f5f72c0c93d8c
+                  expression: 'last(/OLT HUAWEI/OltAuthONU[{#OLTPORT}])>=115'
+                  name: '{#OLTPORT} - {#IFDESCR} pon com 115 ont''s cadastradas'
+                  priority: HIGH
+                  tags:
+                    - tag: STATUS
+                      value: ONU/PON
+            - uuid: 0efaf99c145b4be6862e3f53b48167e1
+              name: 'ONUS SEM ENERGIA {#OLTPORT}'
+              type: DEPENDENT
+              key: 'OltDyingGaspONU[{#OLTPORT}]'
+              delay: '0'
+              trends: 180d
+              units: '!Onus'
+              preprocessing:
+                - type: JAVASCRIPT
+                  parameters:
+                    - |
+                      var resultado = "{#SNMPINDEX}";
+                      
+                      var minhaVariavel = resultado;
+                      
+                      var lines = value.split('\n');
+                      var filteredLines = lines.filter(function(line) {
+                          // Verifica se a linha contém o padrão e exatamente o valor ".9 = INTEGER: 2"
+                          return line.includes(minhaVariavel) && /\.9 = INTEGER: 13/.test(line);
+                      });
+                      
+                      var result = filteredLines.length;
+                      return result !== undefined ? result : 0;
+              master_item:
+                key: 'OltGetONUState[{#OLTPORT}]'
+              tags:
+                - tag: GPON
+                  value: '{#OLTPORT}'
+                - tag: 'STATUS ONU'
+                  value: 'SEM ENERGIA'
+            - uuid: a7d1ed35ee0c43009158406b17a06a16
+              name: 'GET ONUs State {#OLTPORT}'
+              type: SNMP_AGENT
+              snmp_oid: 'walk[1.3.6.1.4.1.2011.6.128.1.1.2.101.1.8.{#SNMPINDEX}]'
+              key: 'OltGetONUState[{#OLTPORT}]'
+              delay: 5m
+              history: '0'
+              value_type: TEXT
+              trends: '0'
+              preprocessing:
+                - type: JAVASCRIPT
+                  parameters:
+                    - |
+                      var resultado = "{#SNMPINDEX}";
+                      
+                      // Cria a expressão regular para corresponder ao padrão desejado
+                      var minhaVariavel = new RegExp(resultado + "\\.[0-9]+\\.9 = ");
+                      
+                      var lines = value.split('\n');
+                      var filteredLines = lines.filter(function(line) {
+                          return minhaVariavel.test(line);
+                      });
+                      
+                      // Retorna as linhas filtradas como uma string, cada linha separada por '\n'
+                      return filteredLines.join('\n');
+              tags:
+                - tag: GPON
+                  value: '{#OLTPORT}'
+            - uuid: d285fbeddd394a50a906fcb6693ebef8
+              name: 'GET ONUs {#OLTPORT}'
+              type: SNMP_AGENT
+              snmp_oid: 'walk[1.3.6.1.4.1.2011.6.128.1.1.2.46.1.15.{#SNMPINDEX}]'
+              key: 'OltGetONU[{#OLTPORT}]'
+              delay: 5m
+              value_type: TEXT
+              trends: '0'
+              tags:
+                - tag: GPON
+                  value: '{#OLTPORT}'
+            - uuid: 5c58812d40bd4a93940c7b8d81dab2c0
+              name: 'ONUS SEM SINAL {#OLTPORT}'
+              type: DEPENDENT
+              key: 'OltLostSignalONU[{#OLTPORT}]'
+              delay: '0'
+              trends: 180d
+              units: '!Onus'
+              preprocessing:
+                - type: JAVASCRIPT
+                  parameters:
+                    - |
+                      var resultado = "{#SNMPINDEX}";
+                      
+                      var minhaVariavel = resultado;
+                      
+                      var lines = value.split('\n');
+                      var filteredLines = lines.filter(function(line) {
+                          // Verifica se a linha contém o padrão e exatamente o valor ".9 = INTEGER: 2"
+                          return line.includes(minhaVariavel) && /\.9 = INTEGER: 2$/.test(line);
+                      });
+                      
+                      var result = filteredLines.length;
+                      return result !== undefined ? result : 0;
+              master_item:
+                key: 'OltGetONUState[{#OLTPORT}]'
+              tags:
+                - tag: GPON
+                  value: '{#OLTPORT}'
+                - tag: 'STATUS ONU'
+                  value: 'SEM SINAL'
+            - uuid: 13240c8b175a4288be8aa1e5744ad9d5
+              name: 'ONUs OFFLINE EM {#OLTPORT}'
+              type: DEPENDENT
+              key: 'OltOffONU[{#OLTPORT}]'
+              delay: '0'
+              trends: 180d
+              units: '!Onus'
+              preprocessing:
+                - type: JAVASCRIPT
+                  parameters:
+                    - |
+                      var resultado = "{#SNMPINDEX}";
+                      
+                      // Cria a expressão regular para corresponder ao padrão desejado
+                      var minhaVariavel = new RegExp(resultado + "\\.[0-9]+ = ");
+                      
+                      var lines = value.split('\n');
+                      var filteredLines = lines.filter(function(line) {
+                          return minhaVariavel.test(line) && line.includes("INTEGER: 2");
+                      });
+                      
+                      var result = filteredLines.length;
+                      return result !== undefined ? result : 0;
+              master_item:
+                key: 'OltGetONU[{#OLTPORT}]'
+              tags:
+                - tag: GPON
+                  value: '{#OLTPORT}'
+                - tag: 'STATUS ONU'
+                  value: OFFLINE
+            - uuid: 6a16b1fdcad943748ff738492f28d914
+              name: 'ONUS ONLINE {#OLTPORT}'
+              type: DEPENDENT
+              key: 'OltOnONU[{#OLTPORT}]'
+              delay: '0'
+              trends: 180d
+              units: '!Onus'
+              preprocessing:
+                - type: JAVASCRIPT
+                  parameters:
+                    - |
+                      var resultado = "{#SNMPINDEX}";
+                      
+                      // Cria a expressão regular para corresponder ao padrão desejado
+                      var minhaVariavel = new RegExp(resultado + "\\.[0-9]+ = ");
+                      
+                      var lines = value.split('\n');
+                      var filteredLines = lines.filter(function(line) {
+                          return minhaVariavel.test(line) && line.includes("INTEGER: 1");
+                      });
+                      
+                      var result = filteredLines.length;
+                      return result !== undefined ? result : 0;
+              master_item:
+                key: 'OltGetONU[{#OLTPORT}]'
+              tags:
+                - tag: GPON
+                  value: '{#OLTPORT}'
+                - tag: 'STATUS ONU'
+                  value: ONLINE
+            - uuid: 68419102bd9948ca83a610d7ad5a0b4b
+              name: 'ONUS DESCONHECIDAS EM {#OLTPORT}'
+              type: CALCULATED
+              key: 'onu.desconhecidas.[{#OLTPORT}]'
+              delay: 5m
+              value_type: FLOAT
+              trends: 180d
+              units: '!Onus'
+              params: |
+                last(//OltAuthONU[{#OLTPORT}])-
+                last(//OltOnONU[{#OLTPORT}])-
+                last(//OltOffONU[{#OLTPORT}])
+              tags:
+                - tag: GPON
+                  value: '{#OLTPORT}'
+                - tag: 'STATUS ONU'
+                  value: DESCONHECIDAS
+            - uuid: afafcce21a4f479e95963549a52e24ae
+              name: 'PORCENTAGEM UTILIZADA EM {#OLTPORT}'
+              type: CALCULATED
+              key: 'percent.util.ONU[{#OLTPORT}]'
+              delay: 5m
+              trends: 180d
+              units: '%'
+              params: 'last(//OltAuthONU[{#OLTPORT}])*100/128'
+              tags:
+                - tag: GPON
+                  value: '{#OLTPORT}'
+            - uuid: ca33b3b44a1e4d9ea058baed450d5415
+              name: 'PORCENTAGEM DE ONU SEM ENERGIA EM GPON {#OLTPORT}'
+              type: CALCULATED
+              key: 'porcent.semenergia[{#OLTPORT}]'
+              delay: 5m
+              trends: 180d
+              units: '%'
+              params: |
+                last(//OltDyingGaspONU[{#OLTPORT}])/
+                last(//OltAuthONU[{#OLTPORT}])*100
+              tags:
+                - tag: GPON
+                  value: '{#OLTPORT}'
+            - uuid: 62bd7595c8be4ccfb27eec7607153b9c
+              name: 'PORCENTAGEM DE ONU SEM SINAL EM GPON {#OLTPORT}'
+              type: CALCULATED
+              key: 'porcent.semsinal[{#OLTPORT}]'
+              delay: 5m
+              trends: 180d
+              units: '%'
+              params: |
+                last(//OltLostSignalONU[{#OLTPORT}])/
+                last(//OltAuthONU[{#OLTPORT}])*100
+              tags:
+                - tag: GPON
+                  value: '{#OLTPORT}'
+          trigger_prototypes:
+            - uuid: 44e783cee45246fbb204fa1f054fd21a
+              expression: |
+                (last(/OLT HUAWEI/OltAuthONU[{#OLTPORT}])>=10 and
+                last(/OLT HUAWEI/OltOnONU[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/OltOffONU[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/OltDyingGaspONU[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/porcent.semenergia[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/OltLostSignalONU[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/porcent.semsinal[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/onu.desconhecidas.[{#OLTPORT}])>=0) and
+                last(/OLT HUAWEI/OltOffONU[{#OLTPORT}])>=
+                last(/OLT HUAWEI/OltAuthONU[{#OLTPORT}])*0.4 and
+                last(/OLT HUAWEI/OltOnONU[{#OLTPORT}])<
+                last(/OLT HUAWEI/OltOnONU[{#OLTPORT}],#2)
+              name: '{ITEM.VALUE3} ONUs OFFLINE EM {#OLTPORT}'
+              opdata: 'OFFLINE: {ITEM.LASTVALUE3}'
+              priority: DISASTER
+              manual_close: 'YES'
+              tags:
+                - tag: STATUS
+                  value: ONU/PON
+            - uuid: 3079a4755bc247af955f49d8abfc178b
+              expression: |
+                (last(/OLT HUAWEI/OltAuthONU[{#OLTPORT}])>=10 and
+                last(/OLT HUAWEI/OltOnONU[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/OltOffONU[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/OltDyingGaspONU[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/porcent.semenergia[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/OltLostSignalONU[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/porcent.semsinal[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/onu.desconhecidas.[{#OLTPORT}])>=0) and
+                last(/OLT HUAWEI/OltOffONU[{#OLTPORT}])>=
+                last(/OLT HUAWEI/OltAuthONU[{#OLTPORT}])*0.6 and
+                last(/OLT HUAWEI/OltOnONU[{#OLTPORT}])<
+                last(/OLT HUAWEI/OltOnONU[{#OLTPORT}],#2)
+              name: '{ITEM.VALUE3} ONUs OFFLINE EM {#OLTPORT}'
+              opdata: 'OFFLINE: {ITEM.LASTVALUE3}'
+              priority: HIGH
+              manual_close: 'YES'
+              dependencies:
+                - name: '{ITEM.VALUE3} ONUs OFFLINE EM {#OLTPORT}'
+                  expression: |
+                    (last(/OLT HUAWEI/OltAuthONU[{#OLTPORT}])>=10 and
+                    last(/OLT HUAWEI/OltOnONU[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/OltOffONU[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/OltDyingGaspONU[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/porcent.semenergia[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/OltLostSignalONU[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/porcent.semsinal[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/onu.desconhecidas.[{#OLTPORT}])>=0) and
+                    last(/OLT HUAWEI/OltOffONU[{#OLTPORT}])>=
+                    last(/OLT HUAWEI/OltAuthONU[{#OLTPORT}])*0.4 and
+                    last(/OLT HUAWEI/OltOnONU[{#OLTPORT}])<
+                    last(/OLT HUAWEI/OltOnONU[{#OLTPORT}],#2)
+              tags:
+                - tag: STATUS
+                  value: ONU/PON
+            - uuid: 3dc78188dca648d9b234c03f56f6d7b0
+              expression: |
+                (last(/OLT HUAWEI/OltAuthONU[{#OLTPORT}])>=10 and
+                last(/OLT HUAWEI/OltOnONU[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/OltOffONU[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/OltDyingGaspONU[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/porcent.semenergia[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/OltLostSignalONU[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/porcent.semsinal[{#OLTPORT}])>=0 and
+                last(/OLT HUAWEI/onu.desconhecidas.[{#OLTPORT}])>=0) and
+                last(/OLT HUAWEI/OltOffONU[{#OLTPORT}])>=
+                last(/OLT HUAWEI/OltAuthONU[{#OLTPORT}])*0.8 and
+                last(/OLT HUAWEI/OltOnONU[{#OLTPORT}])<
+                last(/OLT HUAWEI/OltOnONU[{#OLTPORT}],#2)
+              name: '{ITEM.VALUE3} ONUs OFFLINE EM {#OLTPORT}'
+              opdata: 'OFFLINE: {ITEM.LASTVALUE3}'
+              priority: AVERAGE
+              manual_close: 'YES'
+              dependencies:
+                - name: '{ITEM.VALUE3} ONUs OFFLINE EM {#OLTPORT}'
+                  expression: |
+                    (last(/OLT HUAWEI/OltAuthONU[{#OLTPORT}])>=10 and
+                    last(/OLT HUAWEI/OltOnONU[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/OltOffONU[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/OltDyingGaspONU[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/porcent.semenergia[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/OltLostSignalONU[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/porcent.semsinal[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/onu.desconhecidas.[{#OLTPORT}])>=0) and
+                    last(/OLT HUAWEI/OltOffONU[{#OLTPORT}])>=
+                    last(/OLT HUAWEI/OltAuthONU[{#OLTPORT}])*0.4 and
+                    last(/OLT HUAWEI/OltOnONU[{#OLTPORT}])<
+                    last(/OLT HUAWEI/OltOnONU[{#OLTPORT}],#2)
+                - name: '{ITEM.VALUE3} ONUs OFFLINE EM {#OLTPORT}'
+                  expression: |
+                    (last(/OLT HUAWEI/OltAuthONU[{#OLTPORT}])>=10 and
+                    last(/OLT HUAWEI/OltOnONU[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/OltOffONU[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/OltDyingGaspONU[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/porcent.semenergia[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/OltLostSignalONU[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/porcent.semsinal[{#OLTPORT}])>=0 and
+                    last(/OLT HUAWEI/onu.desconhecidas.[{#OLTPORT}])>=0) and
+                    last(/OLT HUAWEI/OltOffONU[{#OLTPORT}])>=
+                    last(/OLT HUAWEI/OltAuthONU[{#OLTPORT}])*0.6 and
+                    last(/OLT HUAWEI/OltOnONU[{#OLTPORT}])<
+                    last(/OLT HUAWEI/OltOnONU[{#OLTPORT}],#2)
+              tags:
+                - tag: STATUS
+                  value: ONU/PON
+          graph_prototypes:
+            - uuid: 56b12c28b1924504969e36fc57ab6ba6
+              name: '{#OLTPORT} Quantidade de ONT autorizadas'
+              graph_items:
+                - sortorder: '1'
+                  color: 1A7C11
+                  item:
+                    host: 'OLT HUAWEI'
+                    key: 'OltAuthONU[{#OLTPORT}]'
+          master_item:
+            key: get.gpon.walk
+          preprocessing:
+            - type: SNMP_WALK_TO_JSON
+              parameters:
+                - '{#OLTPORT}'
+                - 1.3.6.1.2.1.31.1.1.1.1
+                - '0'
+                - '{#ONUSTATE}'
+                - 1.3.6.1.4.1.2011.6.128.1.1.2.46.1.15
+                - '0'
+        - uuid: ca992d80c7aa4c838e340a49bfdee83a
+          name: 'STATUS ONU'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#SNMPVALUE},1.3.6.1.4.1.2011.6.128.1.1.2.43.1.9,{#SINALRX},1.3.6.1.4.1.2011.6.128.1.1.2.51.1.4]'
+          key: onudisc
+          delay: 2h
+          filter:
+            conditions:
+              - macro: '{#SINALRX}'
+                value: '2147483647'
+                operator: NOT_MATCHES_REGEX
+                formulaid: A
+          enabled_lifetime_type: DISABLE_NEVER
+          item_prototypes:
+            - uuid: 428e05c363af40c99c5854a425a37213
+              name: 'SINAL Rx {#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.6.128.1.1.2.51.1.4.{#SNMPINDEX}'
+              key: 'OntRxPower[{#SNMPINDEX}]'
+              delay: 1h
+              history: 7d
+              value_type: FLOAT
+              units: dBm
+              preprocessing:
+                - type: MULTIPLIER
+                  parameters:
+                    - '0.01'
+                - type: STR_REPLACE
+                  parameters:
+                    - '21474836.47'
+                    - '-40'
+              tags:
+                - tag: ONU
+                  value: SINAL
+              trigger_prototypes:
+                - uuid: cd10f05fb3bd4e7ea5410d9836d66d5d
+                  expression: |
+                    last(/OLT HUAWEI/OntRxPower[{#SNMPINDEX}])<
+                    last(/OLT HUAWEI/OntRxPower[{#SNMPINDEX}],#3) and
+                    last(/OLT HUAWEI/OntRxPower[{#SNMPINDEX}],#3)>=-30 and
+                    count(/OLT HUAWEI/OntRxPower[{#SNMPINDEX}],#2,"lt",-30)=2 and
+                    count(/OLT HUAWEI/OntRxPower[{#SNMPINDEX}],#2,"ne",-40)=2
+                  recovery_mode: RECOVERY_EXPRESSION
+                  recovery_expression: 'count(/OLT HUAWEI/OntRxPower[{#SNMPINDEX}],#2,"ge",-30)=2'
+                  name: 'ONU cliente {#SNMPVALUE} está atenuada (Sinal: {ITEM.VALUE})'
+                  status: DISABLED
+                  priority: WARNING
+                  description: 'Sinal: {ITEM.LASTVALUE}'
+                - uuid: 68791fa10a244b4397c7ab1c60523858
+                  expression: |
+                    last(/OLT HUAWEI/OntRxPower[{#SNMPINDEX}])<>
+                    last(/OLT HUAWEI/OntRxPower[{#SNMPINDEX}],#3) and
+                    count(/OLT HUAWEI/OntRxPower[{#SNMPINDEX}],#2,"eq",0)=2
+                  recovery_mode: RECOVERY_EXPRESSION
+                  recovery_expression: 'count(/OLT HUAWEI/OntRxPower[{#SNMPINDEX}],#2,"ne",0)=2'
+                  name: 'ONU cliente {#SNMPVALUE} offline'
+                  status: DISABLED
+                  priority: WARNING
+            - uuid: 2808afed44b243b1af3d546773c0c3ed
+              name: 'STATUS ONU {#SNMPVALUE}'
+              type: SNMP_AGENT
+              snmp_oid: '1.3.6.1.4.1.2011.6.128.1.1.2.101.1.8.{#SNMPINDEX}.9'
+              key: 'OnuStatus[{#SNMPINDEX}]'
+              delay: 1h
+              history: 7d
+              value_type: FLOAT
+              valuemap:
+                name: 'STATUS ONU'
+              tags:
+                - tag: ONU
+                  value: STATUS
+      valuemaps:
+        - uuid: 48882e5507e74c5a8094f27054aefdc5
+          name: CPU
+          mappings:
+            - value: '-1'
+              newvalue: 'Não Suportado'
+        - uuid: 6766fbf0254a42aaad1b663356d31da9
+          name: 'MODO OPERAÇÃO PLACA'
+          mappings:
+            - value: '1'
+              newvalue: Active_normal
+            - value: '2'
+              newvalue: Standby_normal
+            - value: '255'
+              newvalue: DESCONHECIDO
+        - uuid: 925655772f8d44359af7dea604077fe0
+          name: 'SNMP interface status (ifAdminStatus)'
+          mappings:
+            - value: '1'
+              newvalue: up
+            - value: '2'
+              newvalue: down
+            - value: '3'
+              newvalue: testing
+        - uuid: 4e02cdec15514b8183d77fd28c785b11
+          name: 'SNMP interface status (ifOperStatus)'
+          mappings:
+            - value: '1'
+              newvalue: up
+            - value: '2'
+              newvalue: down
+            - value: '3'
+              newvalue: testing
+            - value: '4'
+              newvalue: unknown
+            - value: '5'
+              newvalue: dormant
+            - value: '6'
+              newvalue: notPresent
+            - value: '7'
+              newvalue: lowerLayerDown
+        - uuid: 0e4e5e6e53e4419c9f2f468dffd8f736
+          name: 'STATUS ONU'
+          mappings:
+            - value: '255'
+              newvalue: UP
+            - value: '2'
+              newvalue: ATENUADA
+            - value: '13'
+              newvalue: DESLIGADA
+            - value: '-1'
+              newvalue: FALHA
+        - uuid: 71d4d096eeed48faa731a4087a298b99
+          name: 'STATUS PLACA'
+          mappings:
+            - value: '1'
+              newvalue: Nula
+            - value: '2'
+              newvalue: Normal
+            - value: '3'
+              newvalue: Defeito
+            - value: '4'
+              newvalue: Desabilitada
+            - value: '6'
+              newvalue: Configuração
+            - value: '7'
+              newvalue: Offline
+            - value: '8'
+              newvalue: Anormal
+            - value: '9'
+              newvalue: VersionError
+            - value: '10'
+              newvalue: Autoload
+            - value: '11'
+              newvalue: 'Fora de Serviço'
+            - value: '12'
+              newvalue: Gracioso
+            - value: '13'
+              newvalue: Shutdown
+            - value: '14'
+              newvalue: 'Desligamento por Economia de Energia'
+            - value: '15'
+              newvalue: 'Desligamento por Alta Temperatura'
+            - value: '16'
+              newvalue: 'Desligamento Manual'
+            - value: '17'
+              newvalue: Incompatibilidade
+            - value: '18'
+              newvalue: Acoffshutdown
+        - uuid: 9e0d13f7893942b9a529d9be56501352
+          name: TEMPERATURA
+          mappings:
+            - value: '2147483647'
+              newvalue: 'Sem Sensor'
