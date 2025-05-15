@@ -1,0 +1,119 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: ee24ed780d3f456088fc3a0a311ce5fa
+      name: OLT-HUAWEI
+  templates:
+    - uuid: cc445b99a1a84991a94981a2f5b78367
+      template: 'HUAWEI - OLT - VLANs REDE-NEUTRA'
+      name: 'HUAWEI - OLT - VLANs REDE-NEUTRA'
+      description:
+        ''
+      groups:
+        - name: OLT-HUAWEI
+      discovery_rules:
+        - uuid: f843f278443540fe9680ed4452c651b1
+          name: 'ID VLANs'
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#IDVLAN},1.3.6.1.4.1.2011.6.128.1.1.3.64.1.8.10]'
+          key: disceryvlanid
+          delay: 12h
+          filter:
+            conditions:
+              - macro: '{#IDVLAN}'
+                value: 297|877|878
+                formulaid: A
+          item_prototypes:
+            - uuid: 06563d5b56a140ddab60a8391b520c9a
+              name: 'GET ONUs VLAN {#IDVLAN}'
+              type: SSH
+              key: 'ssh.run[{#IDVLAN}]'
+              delay: 5m
+              history: '0'
+              value_type: TEXT
+              trends: '0'
+              params: |
+                enable
+                display service-port vlan {#IDVLAN}
+              username: '{$USER}'
+              password: '{$PASSWORD}'
+              preprocessing:
+                - type: JAVASCRIPT
+                  parameters:
+                    - |
+                      // Função para extrair apenas a linha que contém 'Total :'
+                      function extractTotalLine(value) {
+                          // Divide a saída em linhas
+                          var lines = value.split('\n');
+                      
+                          // Itera sobre cada linha de trás para frente para encontrar a última ocorrência de "Total :"
+                          for (var i = lines.length - 1; i >= 0; i--) {
+                              // Verifica se a linha contém 'Total :'
+                              if (lines[i].includes('Total :')) {
+                                  return lines[i]; // Retorna a linha contendo 'Total :'
+                              }
+                          }
+                      
+                          return "Linha 'Total :' não encontrada"; // Retorna mensagem se a linha não for encontrada
+                      }
+                      
+                      // Executa a função e retorna o valor
+                      return extractTotalLine(value); // Use 'value' para referenciar a entrada
+              tags:
+                - tag: OLT
+                  value: PON/ONU
+            - uuid: 7b678ce87552448780505083439981c9
+              name: 'TOTAL ONU EM VLAN {#IDVLAN}'
+              type: DEPENDENT
+              key: 'totalonu.[{#IDVLAN}]'
+              delay: '0'
+              trends: 180d
+              preprocessing:
+                - type: REGEX
+                  parameters:
+                    - ' Total : (\d)  \(Up/Down :  '
+                    - \1
+              master_item:
+                key: 'ssh.run[{#IDVLAN}]'
+              tags:
+                - tag: OLT
+                  value: GPON/REDE-NEUTRA
+            - uuid: dc7121097b364b1a9381214106413afb
+              name: 'TOTAL ONU OFFLINE EM VLAN {#IDVLAN}'
+              type: DEPENDENT
+              key: 'totalonuoffline.[{#IDVLAN}]'
+              delay: '0'
+              trends: 180d
+              preprocessing:
+                - type: REGEX
+                  parameters:
+                    - 'Up\/Down :\s+\d+\/(\d+)'
+                    - \1
+              master_item:
+                key: 'ssh.run[{#IDVLAN}]'
+              tags:
+                - tag: OLT
+                  value: GPON/REDE-NEUTRA
+            - uuid: 9d4f6530596a4bd1b2a12891306262ed
+              name: 'TOTAL ONU ONLINE EM VLAN {#IDVLAN}'
+              type: DEPENDENT
+              key: 'totalonuonline.[{#IDVLAN}]'
+              delay: '0'
+              trends: 180d
+              preprocessing:
+                - type: REGEX
+                  parameters:
+                    - 'Up\/Down :\s+(\d+)\/'
+                    - \1
+              master_item:
+                key: 'ssh.run[{#IDVLAN}]'
+              tags:
+                - tag: OLT
+                  value: GPON/REDE-NEUTRA
+      macros:
+        - macro: '{$PASSWORD}'
+          type: SECRET_TEXT
+          description: 'Senha para acesso SSH ao equipamento.'
+        - macro: '{$USER}'
+          type: SECRET_TEXT
+          description: 'Usuário para acesso SSH ao equipamento.'
